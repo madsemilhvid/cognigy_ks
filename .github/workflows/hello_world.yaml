@@ -1,4 +1,4 @@
-name: Hello world workflow
+name: Execute Python script
 
 on:
   push:
@@ -10,17 +10,12 @@ on:
   workflow_dispatch:
 
 jobs:
-  hello:
+  run_python_script:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: hello world
-        run: echo "Hello world"
-        shell: bash
-  goodbye:
-    runs-on: ubuntu-latest
-    steps:
-      - name: goodbye world
-        run: echo "Goodbye world"
-        shell: bash
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Execute Python script
+        run: python .github/workflows/scrape.py
 
