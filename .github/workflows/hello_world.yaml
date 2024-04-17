@@ -37,7 +37,7 @@ jobs:
 
       - name: Get KS sources
         run: |-
-         curl "https://api-yousee.cognigy.cloud/new/v2.0/knowledgestores" \
+         curl -X GET "https://api-yousee.cognigy.cloud/new/v2.0/knowledgestores" \
           -H "Accept: application/json" \
           -H "X-API-Key: ${{ secrets.COGNIGY_API_KEY }}" \
           -H "Accept: application/json" \
