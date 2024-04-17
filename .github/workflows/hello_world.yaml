@@ -36,8 +36,8 @@ jobs:
           path: opening_hours.ctxt
 
       - name: Get KS sources
-        run |-
-         curl -X GET "https://api-yousee.cognigy.cloud/new/v2.0/knowledgestores" \
+        run: |-
+         curl "https://api-yousee.cognigy.cloud/new/v2.0/knowledgestores" \
  -H "Accept: application/json" \
  -H "X-API-Key: ${{ secrets.COGNIGY_API_KEY }}" \
  -H "Accept: application/json" \
