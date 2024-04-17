@@ -21,8 +21,10 @@ jobs:
         with:
           python-version: '3.9.12' # Specify the version of Python you want to use
 
-      - name: Install BeautifulSoup
-        run: pip install beautifulsoup4
+      - name: Install dependencies
+        run: |
+          pip install beautifulsoup4
+          pip install requests
 
       - name: Execute Python script
         run: python .github/workflows/scrape.py
