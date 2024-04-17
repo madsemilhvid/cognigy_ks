@@ -1,5 +1,4 @@
 1 name: Hello world workflow
-2 
 3 on:
 4   push:
 5     branches:
