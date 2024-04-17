@@ -17,11 +17,6 @@ if response.status_code == 200:
     div_elements = soup.find_all('div', class_='MuiBox-root css-j7qwjs')
     # Extract text or other attributes from the div elements if needed
     div_texts = [div.get_text() for div in div_elements]
-    # Print the text content of the div elements
-    for text in div_texts:
-        print(text)
-else:
-    print('Failed to fetch the page:', response.status_code)
 
 # Fetch the webpage content
 response = requests.get(url)

@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v2
 
       - name: Set up Python
         uses: actions/setup-python@v2
@@ -30,8 +30,16 @@ jobs:
         run: python .github/workflows/scrape.py
 
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v2
         with:
           name: opening_hours
           path: opening_hours.ctxt
+
+      - name: Get KS sources
+        run |-
+         curl -X GET "https://api-yousee.cognigy.cloud/new/v2.0/knowledgestores" \
+ -H "Accept: application/json" \
+ -H "X-API-Key: ${{ secrets.COGNIGY_API_KEY }}" \
+ -H "Accept: application/json" \
+
 
