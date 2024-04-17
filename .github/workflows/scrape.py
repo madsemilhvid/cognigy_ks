@@ -1,3 +1,4 @@
+import os
 import requests
 from bs4 import BeautifulSoup
 import json
@@ -109,15 +110,21 @@ for url_suffix in link_list:
 # Convert the data to JSON format
 results_json = json.dumps(results, ensure_ascii=False)
 
+# Specify the directory where you want to save the file
+output_dir = 'output'
 
-json_array = json.loads(results_json)
+# Ensure that the directory exists, create it if it doesn't
+os.makedirs(output_dir, exist_ok=True)
 
+# Specify the full path of the file
+output_file = os.path.join(output_dir, 'opening_hours.ctxt')
 
 # Generate output in a text file
-with open('opening_hours.ctxt', 'w', encoding='utf-8') as file:
+with open(output_file, 'w', encoding='utf-8') as file:
     # Iterate over the JSON array
     file.write("##\n\n")
     for index, element in enumerate(json_array):
         file.write(f"## ")  # Write element number
         file.write(json.dumps(element, indent=4, ensure_ascii=False))  # Write JSON element
         file.write("\n\n")  # Add newline between elements
+
