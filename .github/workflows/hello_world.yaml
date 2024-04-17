@@ -1,24 +1,26 @@
 1 name: Hello world workflow
+2 
+3 on:
+4   push:
+5     branches:
+6       - main
+7   pull_request:
+8     branches:
+9       - main
+10   workflow_dispatch:
+11 
+12 jobs:
+13   hello:
+14     runs-on: ubuntu-latest
+15     steps:
+16       - uses: actions/checkout@v2
+17       - name: hello world
+18         run: echo "Hello world"
+19         shell: bash
+20   goodbye:
+21     runs-on: ubuntu-latest
+22     steps:
+23       - name: goodbye world
+24         run: echo "Goodbye world"
+25         shell: bash
 
-2 on:
-3   push:
-4     branches:
-5       - main
-6   pull_request:
-7     branches:
-8       - main
-9   workflow_dispatch:
-10 jobs:
-11  hello:
-12    runs-on: ubuntu-latest
-13    steps:
-14      - uses: actions/checkout@v2
-15      - name: hello world
-16        run: echo "Hello world"
-17        shell: bash
-18  goodbye:
-19    runs-on: ubuntu-latest
-20    steps:
-21      - name: goodbye world
-22        run: echo "Goodbye world"
-23        shell: bash
