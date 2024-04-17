@@ -109,6 +109,7 @@ for url_suffix in link_list:
 
 # Convert the data to JSON format
 results_json = json.dumps(results, ensure_ascii=False)
+json_array = json.loads(results_json)
 
 # Specify the directory where you want to save the file
 output_dir = 'output'
