@@ -60,5 +60,4 @@ jobs:
         env:
           PYTHON_LOCATION: /opt/hostedtoolcache/Python/3.9.12/x64
           LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.9.12/x64/lib
-          OPENING_HOURS_ID: ${{ steps.extract_id.outputs.id }}
 
