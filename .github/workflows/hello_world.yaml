@@ -37,7 +37,7 @@ jobs:
 
       - name: Get KS sources
         run: |-
-          curl 'https://api-yousee.cognigy.cloud/new/v2.0/knowledgestores' \
+          curl 'https://api-yousee.cognigy.cloud/new/v2.0/knowledgestores/6614e50de571cdd36d7d7899/sources/661e2c0516e3cf86cfeea274' \
             -X GET -H "Accept: application/json" \
             -H 'X-API-Key: ${{ secrets.COGNIGY_API_KEY }}' \
             -H "Content-Type: application/json" \
@@ -45,4 +45,3 @@ jobs:
         env:
           PYTHON_LOCATION: /opt/hostedtoolcache/Python/3.9.12/x64
           LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.9.12/x64/lib
-
