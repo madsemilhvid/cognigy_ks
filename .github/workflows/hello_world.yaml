@@ -47,11 +47,11 @@ jobs:
       - name: Display File Content
         run: cat output/opening_hours.ctxt
 
-      - name: Upload artifact
-        uses: actions/upload-artifact@v2
-        with:
-          name: opening_hours
-          path: output/opening_hours.ctxt
+      - name: Delete opening_hours.ctxt
+        run: |-
+          curl -X DELETE "https://api-yousee.cognigy.cloud/new/v2.0/knowledgestores/6614e50de571cdd36d7d7899/sources/$opening_hours_id" \
+            -H "Accept: application/json" \
+            -H "X-API-Key: ${{ secrets.COGNIGY_API_KEY }}"
 
       - name: Upload opening_hours source
         run: |-
