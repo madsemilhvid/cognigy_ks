@@ -27,7 +27,7 @@ jobs:
       - name: Extract _id
         id: extract_id
         run: |
-        echo "::set-output name=id::$(curl -s -X GET 'https://api-yousee.cognigy.cloud/new/v2.0/knowledgestores/6614e50de571cdd36d7d7899/sources' -H 'Accept: application/json' -H 'X-API-Key: $KEY' -H 'Accept: application/json' | jq -r '.items[] | select(.name == \"opening_hours.ctxt\") | ._id')"
+          echo "::set-output name=id::$(curl -s -X GET 'https://api-yousee.cognigy.cloud/new/v2.0/knowledgestores/6614e50de571cdd36d7d7899/sources' -H 'Accept: application/json' -H 'X-API-Key: $KEY' -H 'Accept: application/json' | jq -r '.items[] | select(.name == \"opening_hours.ctxt\") | ._id')"
 
       - name: Log _id
         run: echo "Extracted _id: ${{ steps.extract_id.outputs.id }}"
