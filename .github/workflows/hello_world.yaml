@@ -24,6 +24,13 @@ jobs:
           pip install requests
           pip install beautifulsoup4
 
+      - name: Extract _id
+        id: extract_id
+        run: echo "::set-output name=id::$(curl -s -X GET "https://api-yousee.cognigy.cloud/new/v2.0/knowledgestores/6614e50de571cdd36d7d7899/sources" -H "Accept: application/json" -H "X-API-Key: $KEY" -H "Accept: application/json" | jq -r '.items[] | select(.name == "opening_hours.ctxt") | ._id')"
+
+      - name: Log _id
+        run: echo "Extracted _id: ${{ steps.extract_id.outputs.id }}"
+
       - name: Execute Python script
         run: python .github/workflows/scrape.py
 
@@ -43,36 +50,6 @@ jobs:
           name: opening_hours
           path: output/opening_hours.ctxt
 
-      - name: Get document IDs
-        id: get_document_ids
-        run: |
-          response=$(curl -s -X GET "https://api-yousee.cognigy.cloud/new/v2.0/knowledgestores/6614e50de571cdd36d7d7899/sources" \
-            -H "Accept: application/json" \
-            -H "X-API-Key: ${{ secrets.COGNIGY_API_KEY }}" \
-            -H "Accept: application/json")
-          echo "::set-output name=response::$response"
-
-      - name: Extract document ID
-        id: extract_document_id
-        run: |
-          response="${{ steps.get_document_ids.outputs.response }}"
-          echo "Response from API:"
-          echo "$response"
-          ids=$(echo "${{ steps.get_document_ids.outputs.response }}" | jq -r '.items[] | select(.name == "opening_hours.ctxt") | ._id')
-          echo "Extracted ID:"
-          echo "$ids"
-          echo "::set-output name=document_id::$ids"
-        if: steps.get_document_ids.outputs.response != 'null'
-
-      - name: Delete document
-        if: steps.extract_document_id.outputs.document_id != null
-        run: |
-          document_id=$(echo "${{ steps.extract_document_id.outputs.document_id }}")
-          curl -X DELETE "https://api-yousee.cognigy.cloud/new/v2.0/knowledgestores/6614e50de571cdd36d7d7899/sources/${document_id}" \
-            -H "Accept: application/json" \
-            -H "X-API-Key: ${{ secrets.COGNIGY_API_KEY }}" \
-            -H "Accept: application/json"
-
       - name: Upload opening_hours source
         run: |-
           curl 'https://api-yousee.cognigy.cloud/new/v2.0/knowledgestores/6614e50de571cdd36d7d7899/sources/upload' \
@@ -83,4 +60,5 @@ jobs:
         env:
           PYTHON_LOCATION: /opt/hostedtoolcache/Python/3.9.12/x64
           LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.9.12/x64/lib
+          OPENING_HOURS_ID: ${{ steps.extract_id.outputs.id }}
 
