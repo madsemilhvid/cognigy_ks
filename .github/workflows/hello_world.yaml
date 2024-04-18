@@ -22,7 +22,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install requests
-          pip install jq
+          pip install beautifulsoup4
 
       - name: Execute Python script
         run: python .github/workflows/scrape.py
