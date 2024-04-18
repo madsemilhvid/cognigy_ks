@@ -55,8 +55,14 @@ jobs:
       - name: Extract document ID
         id: extract_document_id
         run: |
+          response="${{ steps.get_document_ids.outputs.response }}"
+          echo "Response from API:"
+          echo "$response"
           ids=$(echo "${{ steps.get_document_ids.outputs.response }}" | jq -r '.items[] | select(.name == "opening_hours.ctxt") | ._id')
+          echo "Extracted ID:"
+          echo "$ids"
           echo "::set-output name=document_id::$ids"
+        if: steps.get_document_ids.outputs.response != 'null'
 
       - name: Delete document
         if: steps.extract_document_id.outputs.document_id != null
