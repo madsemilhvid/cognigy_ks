@@ -5,7 +5,7 @@ on:
     branches:
       - main
   schedule:
-    - cron: '0 0 * * *'  # Run every minute day at 00:00
+    - cron: '0 0 * * *'  # Run every day at 00:00
 
 jobs:
   run_python_script:
@@ -23,6 +23,30 @@ jobs:
         run: |
           pip install requests
           pip install beautifulsoup4
+
+      - name: Get document IDs
+        id: get_document_ids
+        run: |
+          response=$(curl -s -X GET "https://api-yousee.cognigy.cloud/new/v2.0/knowledgestores/6614e50de571cdd36d7d7899/sources" \
+            -H "Accept: application/json" \
+            -H "X-API-Key: ${{ secrets.COGNIGY_API_KEY }}" \
+            -H "Accept: application/json")
+          echo "::set-output name=response::$response"
+
+      - name: Extract document ID
+        id: extract_document_id
+        run: |
+          ids=$(echo ${{ steps.get_document_ids.outputs.response }} | jq '.items[] | select(.name == "opening_hours.ctxt") | ._id')
+          echo "::set-output name=document_id::$ids"
+
+      - name: Delete document
+        if: steps.extract_document_id.outputs.document_id != null
+        run: |
+          document_id=$(echo "${{ steps.extract_document_id.outputs.document_id }}" | tr -d '"')
+          curl -X DELETE "https://api-yousee.cognigy.cloud/new/v2.0/knowledgestores/6614e50de571cdd36d7d7899/sources/${document_id}" \
+            -H "Accept: application/json" \
+            -H "X-API-Key: ${{ secrets.COGNIGY_API_KEY }}" \
+            -H "Accept: application/json"
 
       - name: Execute Python script
         run: python .github/workflows/scrape.py
@@ -53,4 +77,3 @@ jobs:
         env:
           PYTHON_LOCATION: /opt/hostedtoolcache/Python/3.9.12/x64
           LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.9.12/x64/lib
-
