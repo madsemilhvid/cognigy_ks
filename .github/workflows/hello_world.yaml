@@ -9,6 +9,11 @@ on:
       - main
   workflow_dispatch:
 
+# Schedule to run every minute
+# More scheduling options: https://docs.github.com/en/actions/reference/events-that-trigger-workflows#schedule
+schedule:
+  - cron: '*/1 * * * *'  # Run every minute
+
 jobs:
   run_python_script:
     runs-on: ubuntu-latest
