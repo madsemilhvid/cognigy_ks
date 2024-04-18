@@ -31,6 +31,7 @@ jobs:
             -H "Accept: application/json" \
             -H "X-API-Key: ${{ secrets.COGNIGY_API_KEY }}")
           opening_hours_id=$(echo $response | python -c "import sys, json; print(json.load(sys.stdin)['items'][0]['_id'])")
+          echo "Extracted opening_hours_id: $opening_hours_id"  # Log the extracted id
           echo "::set-output name=opening_hours_id::$opening_hours_id"
 
       - name: Execute Python script
