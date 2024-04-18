@@ -29,11 +29,21 @@ jobs:
       - name: Execute Python script
         run: python .github/workflows/scrape.py
 
+      # Debugging steps to verify file creation and content
+      - name: Debug Directory
+        run: ls -l output
+
+      - name: Debug File
+        run: ls -l output/opening_hours.ctxt
+
+      - name: Display File Content
+        run: cat output/opening_hours.ctxt
+
       - name: Upload artifact
         uses: actions/upload-artifact@v2
         with:
           name: opening_hours
-          path: opening_hours.ctxt
+          path: output/opening_hours.ctxt
 
       - name: Upload opening_hours source
         run: |-
@@ -41,7 +51,7 @@ jobs:
             -X POST -H "Accept: application/json" \
             -H 'X-API-Key: ${{ secrets.COGNIGY_API_KEY }}' \
             -H "Content-Type: multipart/form-data" \
-            -F "file=@opening_hours.ctxt" \
+            -F "file=@output/opening_hours.ctxt"
         env:
           PYTHON_LOCATION: /opt/hostedtoolcache/Python/3.9.12/x64
           LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.9.12/x64/lib
