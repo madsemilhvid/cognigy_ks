@@ -22,7 +22,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install requests
-          pip install beautifulsoup4
+          pip install jq
 
       - name: Execute Python script
         run: python .github/workflows/scrape.py
@@ -55,13 +55,13 @@ jobs:
       - name: Extract document ID
         id: extract_document_id
         run: |
-          ids=$(echo "$response" | jq '.items[] | select(.name == "opening_hours.ctxt") | ._id')
+          ids=$(echo "${{ steps.get_document_ids.outputs.response }}" | jq -r '.items[] | select(.name == "opening_hours.ctxt") | ._id')
           echo "::set-output name=document_id::$ids"
 
       - name: Delete document
         if: steps.extract_document_id.outputs.document_id != null
         run: |
-          document_id=$(echo "${{ steps.extract_document_id.outputs.document_id }}" | tr -d '"')
+          document_id=$(echo "${{ steps.extract_document_id.outputs.document_id }}")
           curl -X DELETE "https://api-yousee.cognigy.cloud/new/v2.0/knowledgestores/6614e50de571cdd36d7d7899/sources/${document_id}" \
             -H "Accept: application/json" \
             -H "X-API-Key: ${{ secrets.COGNIGY_API_KEY }}" \
