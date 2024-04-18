@@ -5,7 +5,7 @@ on:
     branches:
       - main
   schedule:
-    - cron: '*/1 * * * *'  # Run every minute
+    - cron: '*/15 * * * *'  # Run every minute
 
 jobs:
   run_python_script:
