@@ -40,5 +40,8 @@ jobs:
          curl 'https://api-yousee.cognigy.cloud/new/v2.0/knowledgestores' \
           -X GET -H "Accept: application/json" \
           -H 'X-API-Key: ${{ secrets.COGNIGY_API_KEY }}' \
-
-
+          -H "Content-Type: application/json" \
+          -d @output/opening_hours.ctxt
+       env:
+         PYTHON_LOCATION: /opt/hostedtoolcache/Python/3.9.12/x64
+         LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.9.12/x64/lib
