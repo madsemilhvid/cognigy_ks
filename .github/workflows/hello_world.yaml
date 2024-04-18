@@ -36,7 +36,7 @@ jobs:
       - name: Extract document ID
         id: extract_document_id
         run: |
-          ids=$(echo ${{ steps.get_document_ids.outputs.response }} | jq '.items[] | select(.name == "opening_hours.ctxt") | ._id')
+          ids=$(echo "$response" | jq '.items[] | select(.name == "opening_hours.ctxt") | ._id')
           echo "::set-output name=document_id::$ids"
 
       - name: Delete document
