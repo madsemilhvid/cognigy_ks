@@ -1,13 +1,6 @@
 name: Execute Python script
 
 on:
-  push:
-    branches:
-      - main
-  pull_request:
-    branches:
-      - main
-  workflow_dispatch:
   schedule:
     - cron: '*/1 * * * *'  # Run every minute
 
@@ -57,3 +50,4 @@ jobs:
         env:
           PYTHON_LOCATION: /opt/hostedtoolcache/Python/3.9.12/x64
           LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.9.12/x64/lib
+
