@@ -25,10 +25,13 @@ jobs:
           pip install beautifulsoup4
 
       - name: Extract sources from KS_Main
-        run: |-
-          curl -X GET "https://api-yousee.cognigy.cloud/new/v2.0/knowledgestores/6614e50de571cdd36d7d7899/sources" \
+        id: extract_sources
+        run: |
+          response=$(curl -X GET "https://api-yousee.cognigy.cloud/new/v2.0/knowledgestores/6614e50de571cdd36d7d7899/sources" \
             -H "Accept: application/json" \
-            -H "X-API-Key: ${{ secrets.COGNIGY_API_KEY }}"
+            -H "X-API-Key: ${{ secrets.COGNIGY_API_KEY }}")
+          opening_hours_id=$(echo $response | python -c "import sys, json; print(json.load(sys.stdin)['items'][0]['_id'])")
+          echo "::set-output name=opening_hours_id::$opening_hours_id"
 
       - name: Execute Python script
         run: python .github/workflows/scrape.py
@@ -59,5 +62,4 @@ jobs:
         env:
           PYTHON_LOCATION: /opt/hostedtoolcache/Python/3.9.12/x64
           LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.9.12/x64/lib
-
 
