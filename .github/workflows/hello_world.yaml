@@ -23,6 +23,7 @@ jobs:
         run: |
           pip install requests
           pip install beautifulsoup4
+
       - name: Extract sources from KS_Main
         id: extract_sources
         run: |
@@ -31,8 +32,13 @@ jobs:
             -H "X-API-Key: ${{ secrets.COGNIGY_API_KEY }}")
           echo "API Response: $response"  # Log the API response
 
-          opening_hours_id=$(echo $response | python -c "import sys, json; print(next(item['_id'] for item in json.load(sys.stdin)['items'] if item['name'] == 'opening_hours.ctxt'))")
+          # Extract opening_hours_id based on the file name
+          opening_hours_id=$(echo $response | python -c "import sys, json; items = json.load(sys.stdin)['items']; print(next(item['_id'] for item in items if item['name'] == 'opening_hours.ctxt' and item['status'] == 'ready'))")
           echo "Extracted opening_hours_id: $opening_hours_id"  # Log the extracted id
+          if [[ -z "$opening_hours_id" ]]; then
+            echo "Error: opening_hours.ctxt not found or not ready."
+            exit 1
+          fi
           echo "::set-output name=opening_hours_id::$opening_hours_id"
 
       - name: Execute Python script
