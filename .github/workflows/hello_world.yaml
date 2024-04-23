@@ -23,7 +23,6 @@ jobs:
         run: |
           pip install requests
           pip install beautifulsoup4
-
       - name: Extract sources from KS_Main
         id: extract_sources
         run: |
@@ -31,12 +30,9 @@ jobs:
             -H "Accept: application/json" \
             -H "X-API-Key: ${{ secrets.COGNIGY_API_KEY }}")
           echo "API Response: $response"  # Log the API response
-
-          # Extract opening_hours_id based on the file name
-          opening_hours_id=$(echo $response | python -c "import sys, json; print(next(item['_id'] for item in json.load(sys.stdin)['items'] if item['name'] == 'opening_hours.ctxt'))")
+          opening_hours_id=$(echo $response | python -c "import sys, json; print(json.load(sys.stdin)['items'][0]['_id'])")
           echo "Extracted opening_hours_id: $opening_hours_id"  # Log the extracted id
           echo "::set-output name=opening_hours_id::$opening_hours_id"
-
       - name: Execute Python script
         run: python .github/workflows/scrape.py
 
@@ -56,7 +52,6 @@ jobs:
           curl -X DELETE "https://api-yousee.cognigy.cloud/new/v2.0/knowledgestores/6614e50de571cdd36d7d7899/sources/${{ steps.extract_sources.outputs.opening_hours_id }}" \
             -H "Accept: application/json" \
             -H "X-API-Key: ${{ secrets.COGNIGY_API_KEY }}"
-
       - name: Upload opening_hours source
         run: |-
           curl 'https://api-yousee.cognigy.cloud/new/v2.0/knowledgestores/6614e50de571cdd36d7d7899/sources/upload' \
@@ -67,4 +62,3 @@ jobs:
         env:
           PYTHON_LOCATION: /opt/hostedtoolcache/Python/3.9.12/x64
           LD_LIBRARY_PATH: /opt/hostedtoolcache/Python/3.9.12/x64/lib
-
