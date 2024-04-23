@@ -122,5 +122,6 @@ with open(output_file, 'w', encoding='utf-8') as file:
     for index, element in enumerate(json_array):
         file.write(f"## ")  # Write element number
         file.write(json.dumps(element, indent=4, ensure_ascii=False))  # Write JSON element
+        file.write("\n`source: opening_hours`") 
         file.write("\n\n")  # Add newline between elements
 
