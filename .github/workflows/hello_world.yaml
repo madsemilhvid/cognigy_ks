@@ -30,9 +30,11 @@ jobs:
             -H "Accept: application/json" \
             -H "X-API-Key: ${{ secrets.COGNIGY_API_KEY }}")
           echo "API Response: $response"  # Log the API response
-          opening_hours_id=$(echo $response | python -c "import sys, json; print(json.load(sys.stdin)['items'][0]['_id'])")
+
+          opening_hours_id=$(echo $response | python -c "import sys, json; print(next(item['_id'] for item in json.load(sys.stdin)['items'] if item['name'] == 'opening_hours.ctxt'))")
           echo "Extracted opening_hours_id: $opening_hours_id"  # Log the extracted id
           echo "::set-output name=opening_hours_id::$opening_hours_id"
+
       - name: Execute Python script
         run: python .github/workflows/scrape.py
 
