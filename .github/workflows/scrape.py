@@ -119,5 +119,6 @@ with open(output_file, 'w', encoding='utf-8') as file:
     # Iterate over the results list
     for result in results:
         file.write(result)
+        file.write("`source: opening_hours`\n") 
         file.write("\n")
 
