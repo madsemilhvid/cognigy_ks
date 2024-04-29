@@ -1,7 +1,6 @@
 import os
 import requests
 from bs4 import BeautifulSoup
-import json
 
 # URL of the page you want to scrape
 url = 'https://yousee.dk/hjaelp/butik'
@@ -37,74 +36,72 @@ results = []
 for url_suffix in link_list:
     # Construct the full URL
     url = f'https://yousee.dk/hjaelp/{url_suffix}'
-    # Fetch the webpage content
-    response = requests.get(url)
-    # Parse the HTML content
-    soup = BeautifulSoup(response.content, 'html.parser')
-    # Initialize variables to store the extracted data
-    opening_hours = []
-    store_info = {}
+    try:
+        # Fetch the webpage content
+        response = requests.get(url)
+        # Parse the HTML content
+        soup = BeautifulSoup(response.content, 'html.parser')
+        # Initialize variables to store the extracted data
+        opening_hours = []
+        store_info = {}
 
-    # Find the div with class 'MuiBox-root css-h5fkc8' for opening hours
-    main_div_opening_hours = soup.find('div', class_="MuiBox-root css-h5fkc8")
+        # Find the div with class 'MuiBox-root css-h5fkc8' for opening hours
+        main_div_opening_hours = soup.find('div', class_="MuiBox-root css-h5fkc8")
 
-    # Extract opening hours
-    for span in main_div_opening_hours.find_all('span'):
-        # Check if the span contains date information
-        if '/' in span.get_text():
-            day_date = span.get_text().strip().split()
-            day = day_date[0]
-            date = day_date[1]
-            opening_time = span.find_next('span').get_text().strip()
-            opening_hours.append({
-                "Dag": day,
-                "Dato": date,
-                "Tidspunkt": opening_time
-            })
+        # Extract opening hours
+        for span in main_div_opening_hours.find_all('span'):
+            # Check if the span contains date information
+            if '/' in span.get_text():
+                day_date = span.get_text().strip().split()
+                day = day_date[0]
+                date = day_date[1]
+                opening_time = span.find_next('span').get_text().strip()
+                opening_hours.append(f"{day} {date}: {opening_time}")
 
-    # Find the div with class 'MuiBox-root css-1v9q1ma' for store information
-    main_div_store_info = soup.find('div', class_="MuiBox-root css-1v9q1ma")
+        # Find the div with class 'MuiBox-root css-1v9q1ma' for store information
+        main_div_store_info = soup.find('div', class_="MuiBox-root css-1v9q1ma")
 
-    # Extract store information
-    address_element = main_div_store_info.find('p', itemprop='streetAddress')
-    if address_element:
-        store_info["Adresse"] = address_element.get_text().strip()
-    else:
-        store_info["Adresse"] = ""
+        # Extract store information
+        address_element = main_div_store_info.find('p', itemprop='streetAddress')
+        if address_element:
+            store_info["Adresse"] = address_element.get_text().strip()
+        else:
+            store_info["Adresse"] = ""
 
-    for p in main_div_store_info.find_all('p'):
-        text = p.get_text().strip()
-        # Extract zip code
-        if p.find('span', itemprop='postalCode'):
-            store_info["Postnummer"] = p.find('span', itemprop='postalCode').get_text().strip()
-        # Extract phone number
-        elif "Tlf:" in text:
-            store_info["Telefon"] = text.split("Tlf:")[1].strip()
-        # Extract email
-        elif "@" in text:
-            store_info["Email"] = text
+        for p in main_div_store_info.find_all('p'):
+            text = p.get_text().strip()
+            # Extract zip code
+            if p.find('span', itemprop='postalCode'):
+                store_info["Postnummer"] = p.find('span', itemprop='postalCode').get_text().strip()
+            # Extract phone number
+            elif "Tlf:" in text:
+                store_info["Telefon"] = text.split("Tlf:")[1].strip()
+            # Extract email
+            elif "@" in text:
+                store_info["Email"] = text
 
-    # Extract city
-    city_element = main_div_store_info.find('span', itemprop='addressLocality')
-    if city_element:
-        city = city_element.get_text().strip()
-    else:
-        city = ""
+        # Extract city
+        city_element = main_div_store_info.find('span', itemprop='addressLocality')
+        if city_element:
+            city = city_element.get_text().strip()
+        else:
+            city = ""
 
-    # Combine the extracted data
-    result = {
-        city: {
-            "Åbningstider": opening_hours,
-            "Butiks_Information": store_info
-        }
-    }
+        # Combine the extracted data
+        result = f"## {city}\nÅbningstider:\n"
+        for entry in opening_hours:
+            result += f"{entry}\n"
+        result += "Butiks_Information:\n"
+        result += f"Adresse: {store_info['Adresse']}\n"
+        result += f"Postnummer: {store_info.get('Postnummer', '')}\n"
+        result += f"Telefon: {store_info.get('Telefon', '')}\n"
+        result += f"Email: {store_info.get('Email', '')}\n"
 
-    # Append result to the results list
-    results.append(result)
-
-# Convert the data to JSON format
-results_json = json.dumps(results, ensure_ascii=False)
-json_array = json.loads(results_json)
+        # Append result to the results list
+        results.append(result)
+    except Exception as e:
+        print(f"Error scraping URL: {url}")
+        print(e)
 
 # Specify the directory where you want to save the file
 output_dir = 'output'
@@ -117,11 +114,10 @@ output_file = os.path.join(output_dir, 'opening_hours.ctxt')
 
 # Generate output in a text file
 with open(output_file, 'w', encoding='utf-8') as file:
-    # Iterate over the JSON array
+    # Write the initial "##" header and line break
     file.write("##\n\n")
-    for index, element in enumerate(json_array):
-        file.write(f"## ")  # Write element number
-        file.write(json.dumps(element, indent=4, ensure_ascii=False))  # Write JSON element
-        file.write("\n`source: opening_hours`") 
-        file.write("\n\n")  # Add newline between elements
+    # Iterate over the results list
+    for result in results:
+        file.write(result)
+        file.write("\n")
 
