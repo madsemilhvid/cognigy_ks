@@ -88,7 +88,7 @@ for url_suffix in link_list:
             city = ""
 
         # Combine the extracted data
-        result = f"## {city}\nÅbningstider:\n"
+        result = f"## By: {city}\nÅbningstider:\n"
         for entry in opening_hours:
             result += f"{entry}\n"
         result += "Butiks_Information:\n"
