@@ -90,7 +90,7 @@ for url_suffix in link_list:
         # Combine the extracted data
         result = f"## Keyword: {city}.\nBy: {city}.\nÅbningstider:\n"
         for entry in opening_hours:
-            result += f"{entry}\n"
+            result += f"{entry}.\n"
         result += "Butiks_Information:\n"
         result += f"Adresse: {store_info['Adresse']}\n"
         result += f"Postnummer: {store_info.get('Postnummer', '')}\n"
